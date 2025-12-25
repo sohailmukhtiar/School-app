@@ -11,10 +11,11 @@ app.use(express.json());
 app.use(cors());
 
 const db = createPool({
-    host: process.env.host,
-    user: process.env.user,
-    password: process.env.password,
-    database: process.env.database,
+    host: process.env.DB_HOST || 'mysql',
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'rootpassword',
+    database: process.env.DB_NAME || 'school_app_db',
     connectionLimit: 10, // Adjust based on your requirements
     ssl: {
         rejectUnauthorized: false
