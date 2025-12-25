@@ -8,6 +8,8 @@ services:
       MYSQL_DATABASE: school_app_db
     volumes:
       - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"   # Host:Container port mapping
     networks:
       - school_network
     deploy:
