@@ -14,6 +14,9 @@ services:
       - school_network
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
 
   backend:
     image: sohail/backend-app:latest
@@ -24,7 +27,7 @@ services:
     networks:
       - school_network
     deploy:
-      replicas: 2
+      replicas: 3   # Swarm will distribute automatically across manager + workers
 
   frontend:
     image: sohail/frontend-app:latest
@@ -35,7 +38,7 @@ services:
     networks:
       - school_network
     deploy:
-      replicas: 2
+      replicas: 3   # Swarm will distribute automatically across manager + workers
 
 volumes:
   mysql_data:
