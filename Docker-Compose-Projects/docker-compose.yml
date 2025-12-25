@@ -30,7 +30,7 @@ services:
     networks:
       - school_network
     deploy:
-      replicas: 1  # Swarm will distribute automatically across manager + workers
+      replicas: 2  # Swarm will distribute automatically across manager + workers
 
   frontend:
     image: sohail185/frontend-app:latest
@@ -44,7 +44,7 @@ services:
     networks:
       - school_network
     deploy:
-      replicas: 1   # Swarm will distribute automatically across manager + workers
+      replicas: 2   # Swarm will distribute automatically across manager + workers
 
 volumes:
   mysql_data:
