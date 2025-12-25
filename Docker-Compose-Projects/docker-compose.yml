@@ -23,7 +23,10 @@ services:
     env_file:
       - ./backend/.env
     ports:
-      - "3500:3500"
+      - target: 3500
+        published: 3500
+        protocol: tcp
+        mode: ingress
     networks:
       - school_network
     deploy:
@@ -34,7 +37,10 @@ services:
     env_file:
       - ./frontend/.env
     ports:
-      - "3000:3000"
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: ingress
     networks:
       - school_network
     deploy:
@@ -46,3 +52,4 @@ volumes:
 networks:
   school_network:
     driver: overlay
+
