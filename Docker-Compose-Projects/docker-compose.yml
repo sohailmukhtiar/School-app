@@ -1,22 +1,6 @@
 version: "3.8"
 
 services:
-
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-    networks:
-      - school_network
-    configs:
-      - source: nginx_conf
-        target: /etc/nginx/nginx.conf
-    deploy:
-      replicas: 2
-      placement:
-        constraints:
-          - node.role == worker
-
   mysql:
     image: mysql:8
     environment:
@@ -24,6 +8,8 @@ services:
       MYSQL_DATABASE: school_app_db
     volumes:
       - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"   # Host:Container port mapping
     networks:
       - school_network
     deploy:
@@ -36,19 +22,29 @@ services:
     image: sohail185/backend-app:latest
     env_file:
       - ./backend/.env
+    ports:
+      - target: 3500
+        published: 3500
+        protocol: tcp
+        mode: ingress
     networks:
       - school_network
     deploy:
-      replicas: 2
+      replicas: 2  # Swarm will distribute automatically across manager + workers
 
   frontend:
     image: sohail185/frontend-app:latest
     env_file:
       - ./frontend/.env
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: ingress
     networks:
       - school_network
     deploy:
-      replicas: 2
+      replicas: 2   # Swarm will distribute automatically across manager + workers
 
 volumes:
   mysql_data:
@@ -56,7 +52,3 @@ volumes:
 networks:
   school_network:
     driver: overlay
-
-configs:
-  nginx_conf:
-    external: true
