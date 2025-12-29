@@ -4,4 +4,4 @@ COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
 EXPOSE 3500
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
