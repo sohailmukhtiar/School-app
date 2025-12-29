@@ -20,8 +20,6 @@ FROM nginx:alpine
 # Copy built React files to Nginx html folder
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy custom Nginx config (optional, for SPA routing)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
