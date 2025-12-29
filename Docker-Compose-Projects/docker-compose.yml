@@ -37,7 +37,7 @@ services:
     env_file:
       - ./frontend/.env
     ports:
-      - target: 3000
+      - target: 80
         published: 3000
         protocol: tcp
         mode: ingress
