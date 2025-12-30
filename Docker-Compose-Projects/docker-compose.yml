@@ -12,11 +12,8 @@ services:
     networks:
       - school_network
     deploy:
-      replicas: 1
+      replicas: 2
       endpoint_mode: dnsrr
-      placement:
-        constraints:
-          - node.role == manager
 
   backend:
     image: sohail185/backend-app:latest
