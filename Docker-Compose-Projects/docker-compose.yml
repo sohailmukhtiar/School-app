@@ -13,7 +13,7 @@ services:
       - school_network
     deploy:
       replicas: 1
-      endpoint_mode: dnsrr
+      endpoint_mode: vip
       placement:
         constraints:
           - node.role == manager
