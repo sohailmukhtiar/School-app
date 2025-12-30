@@ -2,22 +2,20 @@ version: "3.8"
 
 services:
   mysql:
-    image: mysql:8
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: school_app_db
-    volumes:
-      - mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"   # Host:Container port mapping
-    networks:
-      - school_network
-    deploy:
-      replicas: 1
-      endpoint_mode: dnsrr
-      placement:
-        constraints:
-          - node.role == manager
+  image: mysql:8
+  environment:
+    MYSQL_ROOT_PASSWORD: rootpassword
+    MYSQL_DATABASE: school_app_db
+  volumes:
+    - mysql_data:/var/lib/mysql
+  networks:
+    - school_network
+  deploy:
+    replicas: 1
+    endpoint_mode: dnsrr
+    placement:
+      constraints:
+        - node.role == manager
 
   backend:
     image: sohail185/backend-app:latest
