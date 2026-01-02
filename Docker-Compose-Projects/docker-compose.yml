@@ -24,7 +24,7 @@ services:
       - target: 3500
         published: 3500
         protocol: tcp
-        mode: ingress
+        mode: host
     networks:
       - school_network
     deploy:
@@ -38,7 +38,7 @@ services:
       - target: 3000
         published: 3000
         protocol: tcp
-        mode: ingress
+        mode: host
     networks:
       - school_network
     deploy:
