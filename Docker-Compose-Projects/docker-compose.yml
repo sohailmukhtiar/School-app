@@ -28,7 +28,7 @@ services:
     networks:
       - school_network
     deploy:
-     replicas: 1
+      replicas: 1
       placement:
         constraints:
           - node.role == manager
@@ -49,9 +49,11 @@ services:
       placement:
         constraints:
           - node.role == manager
+
 volumes:
   mysql_data:
 
 networks:
   school_network:
     driver: overlay
+
