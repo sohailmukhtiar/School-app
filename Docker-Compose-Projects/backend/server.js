@@ -15,7 +15,7 @@ const db = createPool({
     port: process.env.DB_PORT || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'rootpassword',
-    database: process.env.DB_NAME || 'school-app_mysql',
+    database: process.env.DB_NAME || 'school_app_db',
     connectionLimit: 10, // Adjust based on your requirements
     ssl: {
         rejectUnauthorized: false
