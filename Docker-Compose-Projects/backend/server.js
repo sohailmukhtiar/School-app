@@ -158,6 +158,6 @@ app.delete('/teacher/:id', async (req, res) => {
     }
 });
 
-app.listen(3500, () => {
+app.listen(3500, "0.0.0.0", () => {
     console.log("listening on Port 3500");
 });
