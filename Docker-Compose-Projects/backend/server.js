@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 
 const db = createPool({
-    host: process.env.DB_HOST || 'mysql',
+    host: process.env.DB_HOST || 'school-app_mysql',
     port: process.env.DB_PORT || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'rootpassword',
