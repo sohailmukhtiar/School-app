@@ -28,7 +28,10 @@ services:
     networks:
       - school_network
     deploy:
-      replicas: 2
+     replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
 
   frontend:
     image: sohail185/frontend-app:latest
@@ -42,8 +45,10 @@ services:
     networks:
       - school_network
     deploy:
-      replicas: 2
-
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
 volumes:
   mysql_data:
 
