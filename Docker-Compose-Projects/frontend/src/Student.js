@@ -43,7 +43,10 @@ const getData=()=> {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify( studentData )
+      body: JSON.stringify({
+  ...studentData,
+  rollNo: Number(studentData.rollNo)   // 🔴 YAHAN FIX HAI
+})
   };
     
     fetch(`${API_BASE_URL}/addstudent`, requestOptions ).then((res) => res.json())
