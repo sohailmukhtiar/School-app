@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: sohail185/backend-app:${BUILD_TAG}
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: sohail185/frontend-app:${BUILD_TAG}
