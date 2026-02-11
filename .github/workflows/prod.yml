@@ -77,7 +77,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: Docker-Compose-Projects/docker-compose.deploy.yml
-        target: /app/docker-compose.deploy.yml
+        target: /app/
         overwrite: true
 
     # 8️⃣ Deploy On Server
