@@ -11,8 +11,8 @@ permissions:
 
 env:
   IMAGE_TAG: ${{ github.sha }}
-  IMAGE_BACKEND: ghcr.io/${{ github.actor }}/backend-app
-  IMAGE_FRONTEND: ghcr.io/${{ github.actor }}/frontend-app
+  IMAGE_BACKEND: ghcr.io/sohailmukhtiar/backend-app
+  IMAGE_FRONTEND: ghcr.io/sohailmukhtiar/frontend-app
 
 jobs:
   build-and-deploy:
@@ -75,7 +75,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          export IMAGE_TAG=${{ github.sha }}
+          export IMAGE_TAG=${{ github.sha }}  # ✅ Pass the same tag as used in push
           cd ~/app/Docker-Compose-Projects
           docker compose -f docker-compose.deploy.yml pull
           docker compose -f docker-compose.deploy.yml up -d
