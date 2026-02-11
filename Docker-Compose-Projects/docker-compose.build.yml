@@ -5,10 +5,10 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    image: sohail185/backend-app:${BUILD_TAG}
+    image: sohail185/backend-app:${IMAGE_TAG}
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: sohail185/frontend-app:${BUILD_TAG}
+    image: sohail185/frontend-app:${IMAGE_TAG}
