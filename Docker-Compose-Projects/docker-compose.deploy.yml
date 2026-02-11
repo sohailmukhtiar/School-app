@@ -39,8 +39,8 @@ services:
     container_name: frontend_app
     restart: always
     environment:
-      REACT_APP_API_URL: http://192.168.217.224:3500
-      FRONTEND_URL: http://192.168.217.224:3000
+      REACT_APP_API_URL: http://localhost:3500
+      FRONTEND_URL: http://localhost:3000
     ports:
       - "3000:3000"
     depends_on:
