@@ -11,7 +11,6 @@ permissions:
 
 env:
   IMAGE_TAG: ${{ github.sha }}
-  REGISTRY: ghcr.io
   IMAGE_BACKEND: ghcr.io/${{ github.actor }}/backend-app
   IMAGE_FRONTEND: ghcr.io/${{ github.actor }}/frontend-app
 
@@ -44,19 +43,23 @@ jobs:
           -Dsonar.host.url="${{ secrets.SONARQUBE_URL }}" \
           -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
 
-    # 4️⃣ Build Backend Image
-    - name: Build Backend
+    # 4️⃣ Build & Push Backend
+    - name: Build Backend Image
       run: |
-        docker build -t $IMAGE_BACKEND:$IMAGE_TAG ./backend
+        docker build \
+          -t $IMAGE_BACKEND:$IMAGE_TAG \
+          Docker-Compose-Projects/backend
         docker push $IMAGE_BACKEND:$IMAGE_TAG
 
-    # 5️⃣ Build Frontend Image
-    - name: Build Frontend
+    # 5️⃣ Build & Push Frontend
+    - name: Build Frontend Image
       run: |
-        docker build -t $IMAGE_FRONTEND:$IMAGE_TAG ./frontend
+        docker build \
+          -t $IMAGE_FRONTEND:$IMAGE_TAG \
+          Docker-Compose-Projects/frontend
         docker push $IMAGE_FRONTEND:$IMAGE_TAG
 
-    # 6️⃣ Copy Deploy Compose to Server
+    # 6️⃣ Copy Deploy File To Server
     - name: Copy Deploy File
       uses: appleboy/scp-action@v0.1.4
       with:
@@ -66,7 +69,7 @@ jobs:
         source: Docker-Compose-Projects/docker-compose.deploy.yml
         target: /app/docker-compose.deploy.yml
 
-    # 7️⃣ Deploy on Server
+    # 7️⃣ Deploy On Server
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v1
       with:
