@@ -48,12 +48,12 @@ jobs:
     # 6️⃣ Build Docker Images using Compose
     - name: Build Images
       run: |
-        docker compose -f docker-compose.build.yml build
+        docker compose -f Docker-Compose-Projects/docker-compose.build.yml build
 
     # 7️⃣ Push Docker Images
     - name: Push Images
       run: |
-        docker compose -f docker-compose.build.yml push
+        docker compose -f Docker-Compose-Projects/docker-compose.build.yml push
 
     # 8️⃣ Deploy to Remote Server via SSH
     - name: Deploy via SSH
@@ -66,5 +66,5 @@ jobs:
           export DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
           export IMAGE_TAG=${{ github.sha }}
           cd /app
-          docker compose -f docker-compose.deploy.yml pull
-          docker compose -f docker-compose.deploy.yml up -d
+          docker compose -f Docker-Compose-Projects/docker-compose.deploy.yml pull
+          docker compose -f Docker-Compose-Projects/docker-compose.deploy.yml up -d
