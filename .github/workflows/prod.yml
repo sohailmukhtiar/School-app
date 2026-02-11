@@ -59,7 +59,17 @@ jobs:
           Docker-Compose-Projects/frontend
         docker push $IMAGE_FRONTEND:$IMAGE_TAG
 
-    # 6️⃣ Copy Deploy File To Server
+    # 6️⃣ Ensure /app folder exists on Server
+    - name: Ensure /app folder exists
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          mkdir -p /app
+
+    # 7️⃣ Copy Deploy File To Server
     - name: Copy Deploy File
       uses: appleboy/scp-action@v0.1.4
       with:
@@ -68,8 +78,9 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: Docker-Compose-Projects/docker-compose.deploy.yml
         target: /app/docker-compose.deploy.yml
+        overwrite: true
 
-    # 7️⃣ Deploy On Server
+    # 8️⃣ Deploy On Server
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v1
       with:
