@@ -66,5 +66,11 @@ jobs:
           export DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
           export IMAGE_TAG=${{ github.sha }}
           cd /app
-          docker compose -f Docker-Compose-Projects/docker-compose.deploy.yml pull
-          docker compose -f Docker-Compose-Projects/docker-compose.deploy.yml up -d
+          
+          # Copy docker-compose.deploy.yml from repo to remote server
+          cat << 'EOF' > docker-compose.deploy.yml
+$(cat Docker-Compose-Projects/docker-compose.deploy.yml)
+EOF
+
+          docker compose -f docker-compose.deploy.yml pull
+          docker compose -f docker-compose.deploy.yml up -d
