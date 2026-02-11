@@ -26,7 +26,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    # 3️⃣ Optional: Check SonarQube connectivity
+    # 3️⃣ Optional: Verify SonarQube connectivity
     - name: Verify SonarQube URL
       run: |
         echo "SonarQube URL: ${{ secrets.SONARQUBE_URL }}"
@@ -53,7 +53,7 @@ jobs:
       run: |
         docker compose -f docker-compose.build.yml push
 
-    # 7️⃣ Deploy to Server
+    # 7️⃣ Deploy to Server via SSH
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v1
       with:
@@ -66,4 +66,4 @@ jobs:
           cd /app
           docker compose -f docker-compose.deploy.yml pull
           docker compose -f docker-compose.deploy.yml up -d
- docker-compose.deploy.yml up -d
+
