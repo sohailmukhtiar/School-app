@@ -10,8 +10,8 @@ permissions:
   packages: write
 
 env:
-  IMAGE_BACKEND: ghcr.io/${{ github.actor }}/backend-app
-  IMAGE_FRONTEND: ghcr.io/${{ github.actor }}/frontend-app
+  IMAGE_BACKEND: ghcr.io/${{ github.repository_owner }}/backend-app  # ONLY CHANGE: github.actor -> github.repository_owner
+  IMAGE_FRONTEND: ghcr.io/${{ github.repository_owner }}/frontend-app  # ONLY CHANGE: github.actor -> github.repository_owner
 
 jobs:
   build-and-deploy:
@@ -21,13 +21,15 @@ jobs:
     # 1️⃣ Checkout
     - name: Checkout Code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # ONLY ADDITION: fixes shallow clone warning
 
     # 2️⃣ Login to GHCR
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ github.actor }}
+        username: ${{ github.repository_owner }}  # ONLY CHANGE: github.actor -> github.repository_owner
         password: ${{ secrets.GHCR_PAT }}
 
     # 3️⃣ SonarQube Scan
@@ -72,7 +74,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin  # ONLY CHANGE: github.actor -> github.repository_owner
           cd ~/app/Docker-Compose-Projects
           docker compose -f docker-compose.deploy.yml pull
           docker compose -f docker-compose.deploy.yml up -d
