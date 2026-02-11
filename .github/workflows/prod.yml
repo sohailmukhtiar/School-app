@@ -59,15 +59,15 @@ jobs:
           Docker-Compose-Projects/frontend
         docker push $IMAGE_FRONTEND:$IMAGE_TAG
 
-    # 6️⃣ Ensure /app folder exists on Server
-    - name: Ensure /app folder exists
+    # 6️⃣ Ensure deploy folder exists in home directory
+    - name: Ensure deploy folder exists
       uses: appleboy/ssh-action@v1
       with:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          mkdir -p /app
+          mkdir -p ~/app
 
     # 7️⃣ Copy Deploy File To Server
     - name: Copy Deploy File
@@ -77,7 +77,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: Docker-Compose-Projects/docker-compose.deploy.yml
-        target: /app/
+        target: ~/app/
         overwrite: true
 
     # 8️⃣ Deploy On Server
@@ -90,6 +90,6 @@ jobs:
         script: |
           echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           export IMAGE_TAG=${{ github.sha }}
-          cd /app
+          cd ~/app
           docker compose -f docker-compose.deploy.yml pull
           docker compose -f docker-compose.deploy.yml up -d
