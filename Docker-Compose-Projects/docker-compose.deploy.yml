@@ -16,7 +16,7 @@ services:
       - school_network
 
   backend:
-    image: ghcr.io/sohailmukhtiar/backend-app:${IMAGE_TAG}  # ✅ Use dynamic IMAGE_TAG
+    image: ghcr.io/sohailmukhtiar/backend-app:latest  # ✅ always pull latest
     container_name: backend_app
     restart: always
     environment:
@@ -35,7 +35,7 @@ services:
       - school_network
 
   frontend:
-    image: ghcr.io/sohailmukhtiar/frontend-app:${IMAGE_TAG}  # ✅ Use dynamic IMAGE_TAG
+    image: ghcr.io/sohailmukhtiar/frontend-app:latest  # ✅ always pull latest
     container_name: frontend_app
     restart: always
     environment:
@@ -54,3 +54,4 @@ volumes:
 networks:
   school_network:
     driver: bridge
+
