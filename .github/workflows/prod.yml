@@ -5,36 +5,35 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  packages: write
+
 env:
-  DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   IMAGE_TAG: ${{ github.sha }}
+  REGISTRY: ghcr.io
+  IMAGE_BACKEND: ghcr.io/${{ github.actor }}/backend-app
+  IMAGE_FRONTEND: ghcr.io/${{ github.actor }}/frontend-app
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ Checkout code
+
+    # 1️⃣ Checkout
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # 2️⃣ Setup Docker Buildx
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    # 3️⃣ Docker Login
-    - name: Login to DockerHub
+    # 2️⃣ Login to GHCR
+    - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
-    # 4️⃣ Test SonarQube API (optional debug)
-    - name: Test SonarQube API
-      run: |
-        curl -v ${{ secrets.SONARQUBE_URL }}/api/system/status
-
-    # 5️⃣ SonarQube Scan
+    # 3️⃣ SonarQube Scan
     - name: Sonar Scan
       run: |
         docker run --rm \
@@ -45,17 +44,19 @@ jobs:
           -Dsonar.host.url="${{ secrets.SONARQUBE_URL }}" \
           -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
 
-    # 6️⃣ Build Docker Images using Compose
-    - name: Build Images
+    # 4️⃣ Build Backend Image
+    - name: Build Backend
       run: |
-        docker compose -f Docker-Compose-Projects/docker-compose.build.yml build
+        docker build -t $IMAGE_BACKEND:$IMAGE_TAG ./backend
+        docker push $IMAGE_BACKEND:$IMAGE_TAG
 
-    # 7️⃣ Push Docker Images
-    - name: Push Images
+    # 5️⃣ Build Frontend Image
+    - name: Build Frontend
       run: |
-        docker compose -f Docker-Compose-Projects/docker-compose.build.yml push
+        docker build -t $IMAGE_FRONTEND:$IMAGE_TAG ./frontend
+        docker push $IMAGE_FRONTEND:$IMAGE_TAG
 
-    # 8️⃣ Copy Deploy File to Remote Server
+    # 6️⃣ Copy Deploy Compose to Server
     - name: Copy Deploy File
       uses: appleboy/scp-action@v0.1.4
       with:
@@ -65,7 +66,7 @@ jobs:
         source: Docker-Compose-Projects/docker-compose.deploy.yml
         target: /app/docker-compose.deploy.yml
 
-    # 9️⃣ Deploy to Remote Server via SSH
+    # 7️⃣ Deploy on Server
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v1
       with:
@@ -73,7 +74,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          export DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+          echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           export IMAGE_TAG=${{ github.sha }}
           cd /app
           docker compose -f docker-compose.deploy.yml pull
