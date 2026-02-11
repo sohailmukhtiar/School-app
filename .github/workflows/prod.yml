@@ -19,18 +19,14 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # 2️⃣ Setup Docker
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    # 3️⃣ Docker Login
+    # 2️⃣ Docker Login
     - name: Login to DockerHub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    # 4️⃣ Sonar Scan (Fixed)
+    # 3️⃣ SonarQube Scan
     - name: Sonar Scan
       run: |
         docker run --rm \
@@ -41,17 +37,17 @@ jobs:
           -Dsonar.host.url="${{ secrets.SONARQUBE_URL }}" \
           -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
 
-    # 5️⃣ Build Images using Compose
-    - name: Build Images
+    # 4️⃣ Build Docker Images
+    - name: Build Docker Images
       run: |
         docker compose -f docker-compose.build.yml build
 
-    # 6️⃣ Push Images
-    - name: Push Images
+    # 5️⃣ Push Images to DockerHub
+    - name: Push Docker Images
       run: |
         docker compose -f docker-compose.build.yml push
 
-    # 7️⃣ Deploy to Server
+    # 6️⃣ Deploy to Server
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v1
       with:
