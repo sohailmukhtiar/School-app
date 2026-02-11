@@ -26,7 +26,13 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    # 3️⃣ SonarQube Scan
+    # 3️⃣ Optional: Check SonarQube connectivity
+    - name: Verify SonarQube URL
+      run: |
+        echo "SonarQube URL: ${{ secrets.SONARQUBE_URL }}"
+        curl -v ${{ secrets.SONARQUBE_URL }}/api/system/status
+
+    # 4️⃣ SonarQube Scan
     - name: Sonar Scan
       run: |
         docker run --rm \
@@ -34,20 +40,20 @@ jobs:
           sonarsource/sonar-scanner-cli \
           -Dsonar.projectKey=myapp \
           -Dsonar.sources=. \
-          -Dsonar.host.url="${{ secrets.SONARQUBE_URL }}" \
-          -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
+          -Dsonar.host.url=${{ secrets.SONARQUBE_URL }} \
+          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
 
-    # 4️⃣ Build Docker Images
+    # 5️⃣ Build Docker Images
     - name: Build Docker Images
       run: |
         docker compose -f docker-compose.build.yml build
 
-    # 5️⃣ Push Images to DockerHub
+    # 6️⃣ Push Docker Images to DockerHub
     - name: Push Docker Images
       run: |
         docker compose -f docker-compose.build.yml push
 
-    # 6️⃣ Deploy to Server
+    # 7️⃣ Deploy to Server
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v1
       with:
@@ -60,3 +66,4 @@ jobs:
           cd /app
           docker compose -f docker-compose.deploy.yml pull
           docker compose -f docker-compose.deploy.yml up -d
+ docker-compose.deploy.yml up -d
