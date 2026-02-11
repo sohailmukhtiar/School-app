@@ -62,9 +62,10 @@ jobs:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: Docker-Compose-Projects/docker-compose.deploy.yml
-        target: ~/app/Docker-Compose-Projects/
+        source: "Docker-Compose-Projects/docker-compose.deploy.yml"
+        target: "~/app/"
         overwrite: true
+        strip_components: 1
 
     # 7️⃣ Deploy On Server
     - name: Deploy via SSH
@@ -75,6 +76,6 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u sohailmukhtiar --password-stdin
-          cd ~/app/Docker-Compose-Projects
+          cd ~/app
           docker compose -f docker-compose.deploy.yml pull
           docker compose -f docker-compose.deploy.yml up -d
