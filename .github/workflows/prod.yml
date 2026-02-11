@@ -34,14 +34,12 @@ jobs:
     - name: Sonar Scan
       run: |
         docker run --rm \
-          -e SONAR_HOST_URL="${{ secrets.SONARQUBE_URL }}" \
-          -e SONAR_LOGIN="${{ secrets.SONARQUBE_TOKEN }}" \
           -v "${{ github.workspace }}":/usr/src \
           sonarsource/sonar-scanner-cli \
           -Dsonar.projectKey=myapp \
           -Dsonar.sources=. \
-          -Dsonar.host.url=$SONARQUBE_URL \
-          -Dsonar.login=$SONAR_LOGIN
+          -Dsonar.host.url="${{ secrets.SONARQUBE_URL }}" \
+          -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
 
     # 5️⃣ Build Images using Compose
     - name: Build Images
