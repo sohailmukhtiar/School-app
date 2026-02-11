@@ -55,7 +55,17 @@ jobs:
       run: |
         docker compose -f Docker-Compose-Projects/docker-compose.build.yml push
 
-    # 8️⃣ Deploy to Remote Server via SSH
+    # 8️⃣ Copy Deploy File to Remote Server
+    - name: Copy Deploy File
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: Docker-Compose-Projects/docker-compose.deploy.yml
+        target: /app/docker-compose.deploy.yml
+
+    # 9️⃣ Deploy to Remote Server via SSH
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v1
       with:
@@ -66,11 +76,5 @@ jobs:
           export DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
           export IMAGE_TAG=${{ github.sha }}
           cd /app
-          
-          # Copy docker-compose.deploy.yml from repo to remote server
-          cat << 'EOF' > docker-compose.deploy.yml
-$(cat Docker-Compose-Projects/docker-compose.deploy.yml)
-EOF
-
           docker compose -f docker-compose.deploy.yml pull
           docker compose -f docker-compose.deploy.yml up -d
