@@ -16,7 +16,7 @@ services:
       - school_network
 
   backend:
-    image: sohail185/backend-app:${IMAGE_TAG}
+    image: ghcr.io/sohail185/backend-app:${IMAGE_TAG}
     container_name: backend_app
     restart: always
     environment:
@@ -35,12 +35,12 @@ services:
       - school_network
 
   frontend:
-    image: sohail185/frontend-app:${IMAGE_TAG}
+    image: ghcr.io/sohail185/frontend-app:${IMAGE_TAG}
     container_name: frontend_app
     restart: always
     environment:
-      REACT_APP_API_URL: http://localhost:3500
-      FRONTEND_URL: http://localhost:3000
+      REACT_APP_API_URL: http://18.175.243.118:3500
+      FRONTEND_URL: http://18.175.243.118:3000
     ports:
       - "3000:3000"
     depends_on:
