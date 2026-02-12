@@ -2,8 +2,7 @@ name: Production CI/CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: read
@@ -12,62 +11,32 @@ permissions:
 env:
   IMAGE_BACKEND: ghcr.io/sohailmukhtiar/backend-app
   IMAGE_FRONTEND: ghcr.io/sohailmukhtiar/frontend-app
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ Checkout
-    - name: Checkout Code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+    - uses: actions/checkout@v4
 
-    # 2️⃣ Login to GHCR
-    - name: Login to GitHub Container Registry
+    - name: Login to GHCR
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: sohailmukhtiar
-        password: ${{ secrets.GHCR_PAT }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
-    # 3️⃣ SonarQube Scan
-    - name: Sonar Scan
+    - name: Build & Push Backend
       run: |
-        docker run --rm \
-          -v "${{ github.workspace }}":/usr/src \
-          sonarsource/sonar-scanner-cli \
-          -Dsonar.projectKey=myapp \
-          -Dsonar.sources=. \
-          -Dsonar.host.url="${{ secrets.SONARQUBE_URL }}" \
-          -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
+        docker build -t $IMAGE_BACKEND:$IMAGE_TAG Docker-Compose-Projects/backend
+        docker push $IMAGE_BACKEND:$IMAGE_TAG
 
-    # 4️⃣ Build & Push Backend
-    - name: Build Backend Image
+    - name: Build & Push Frontend
       run: |
-        docker build -t $IMAGE_BACKEND:latest Docker-Compose-Projects/backend
-        docker push $IMAGE_BACKEND:latest
+        docker build -t $IMAGE_FRONTEND:$IMAGE_TAG Docker-Compose-Projects/frontend
+        docker push $IMAGE_FRONTEND:$IMAGE_TAG
 
-    # 5️⃣ Build & Push Frontend
-    - name: Build Frontend Image
-      run: |
-        docker build -t $IMAGE_FRONTEND:latest Docker-Compose-Projects/frontend
-        docker push $IMAGE_FRONTEND:latest
-
-    # 6️⃣ Copy Deploy File To Server
-    - name: Copy Deploy File
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "Docker-Compose-Projects/docker-compose.deploy.yml"
-        target: "~/app/"
-        overwrite: true
-        strip_components: 1
-
-    # 7️⃣ Deploy On Server
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v1
       with:
